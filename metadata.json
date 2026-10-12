@@ -1,0 +1,6 @@
+{
+  "name": "Equilibria - Test de Buenos Hábitos Saludables",
+  "description": "Evaluador interactivo de bienestar en los cuatro pilares fundamentales: sueño, alimentación, salud mental y ejercicio físico. Incluye comparativas visuales, historial local, modo oscuro automático y reporte en PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
