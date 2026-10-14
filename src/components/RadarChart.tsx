@@ -67,16 +67,16 @@ export const RadarChart: React.FC<RadarChartProps> = ({
           className="w-full h-full overflow-visible transition-colors"
         >
           <defs>
-            {/* User polygon gradient */}
+            {/* Natural Sage to Sky User gradient */}
             <linearGradient id="userGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#0d9488" stopOpacity="0.45" />
-              <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.25" />
+              <stop offset="0%" stopColor="#059669" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#0284c7" stopOpacity="0.25" />
             </linearGradient>
 
-            {/* Comparison polygon gradient */}
+            {/* Calm Ocean Blue Comparison gradient */}
             <linearGradient id="compGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#818cf8" stopOpacity="0.15" />
+              <stop offset="0%" stopColor="#0284c7" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#0d9488" stopOpacity="0.15" />
             </linearGradient>
           </defs>
 
@@ -93,7 +93,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1"
-                className="text-slate-200 dark:text-slate-800"
+                className="text-stone-200 dark:text-stone-800"
                 strokeDasharray={ringValue === 100 ? undefined : '2,2'}
               />
             );
@@ -108,7 +108,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                 x={pt.x + 4}
                 y={pt.y - 2}
                 fontSize="9"
-                className="fill-slate-400 dark:fill-slate-500 font-mono tabular-nums select-none"
+                className="fill-stone-400 dark:fill-stone-500 font-mono tabular-nums select-none"
               >
                 {ringValue}%
               </text>
@@ -127,7 +127,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                 y2={outerPt.y}
                 stroke="currentColor"
                 strokeWidth="1.2"
-                className="text-slate-200 dark:text-slate-800"
+                className="text-stone-200 dark:text-stone-800"
               />
             );
           })}
@@ -139,7 +139,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
             stroke="currentColor"
             strokeWidth="1.5"
             strokeDasharray="4,4"
-            className="text-emerald-400/80 dark:text-emerald-500/70"
+            className="text-emerald-500/80 dark:text-emerald-400/80"
           />
 
           {/* Comparison evaluation polygon (if provided) */}
@@ -147,7 +147,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
             <polygon
               points={getPolygonPoints(comparisonScores)}
               fill="url(#compGrad)"
-              stroke="#6366f1"
+              stroke="#0284c7"
               strokeWidth="2"
               strokeDasharray="3,3"
               className="transition-all duration-300"
@@ -158,9 +158,9 @@ export const RadarChart: React.FC<RadarChartProps> = ({
           <polygon
             points={getPolygonPoints(currentScores)}
             fill="url(#userGrad)"
-            stroke="#0d9488"
+            stroke="#059669"
             strokeWidth="2.5"
-            className="transition-all duration-300 drop-shadow-sm"
+            className="transition-all duration-300 drop-shadow-xs"
           />
 
           {/* Vertices & touch hotspots */}
@@ -179,7 +179,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                   cy={pt.y}
                   r={isHovered ? 6 : 4.5}
                   fill="#ffffff"
-                  stroke="#0d9488"
+                  stroke="#059669"
                   strokeWidth="2.5"
                   className="transition-all duration-200"
                 />
@@ -224,8 +224,8 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                   dy={dy}
                   className={`text-xs font-semibold transition-colors ${
                     activePillar === axis.id
-                      ? 'fill-teal-700 dark:fill-teal-300'
-                      : 'fill-slate-700 dark:fill-slate-300'
+                      ? 'fill-emerald-700 dark:fill-emerald-300'
+                      : 'fill-stone-700 dark:fill-stone-300'
                   }`}
                 >
                   {pillarInfo.name.split(' ')[0]}
@@ -235,7 +235,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                   y={ly}
                   textAnchor={textAnchor}
                   dy={axis.angleDeg === 270 ? '0.7em' : axis.angleDeg === 90 ? '2.1em' : '1.45em'}
-                  className="text-[11px] font-mono tabular-nums fill-teal-600 dark:fill-teal-400 font-medium"
+                  className="text-[11px] font-mono tabular-nums fill-emerald-600 dark:fill-emerald-400 font-medium"
                 >
                   {score}%
                 </text>
@@ -246,12 +246,12 @@ export const RadarChart: React.FC<RadarChartProps> = ({
 
         {/* Hover pill detail tooltip */}
         {activePillar && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none bg-slate-900/90 text-white dark:bg-slate-800/95 dark:text-slate-100 text-xs py-1.5 px-3 rounded-lg shadow-lg backdrop-blur-sm border border-slate-700/50 flex flex-col items-center gap-0.5 z-10 transition-all">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none bg-stone-900/90 text-white dark:bg-stone-800/95 dark:text-stone-100 text-xs py-1.5 px-3 rounded-lg shadow-lg backdrop-blur-sm border border-stone-700/50 flex flex-col items-center gap-0.5 z-10 transition-all">
             <span className="font-semibold">{pillars[activePillar].name}</span>
-            <span className="font-mono tabular-nums text-teal-300 text-sm">
+            <span className="font-mono tabular-nums text-emerald-300 text-sm">
               {currentScores[activePillar]}%
             </span>
-            <span className="text-[10px] text-slate-300 text-center max-w-[140px]">
+            <span className="text-[10px] text-stone-300 text-center max-w-[140px]">
               {pillars[activePillar].subtitle}
             </span>
           </div>
@@ -259,9 +259,9 @@ export const RadarChart: React.FC<RadarChartProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-4 text-xs text-slate-600 dark:text-slate-400">
+      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-4 text-xs text-stone-600 dark:text-stone-400">
         <div className="flex items-center gap-1.5">
-          <span className="w-3.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-400 inline-block" />
+          <span className="w-3.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 inline-block" />
           <span>{t('radarUser')}</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -270,7 +270,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         </div>
         {comparisonScores && (
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-1.5 rounded-full bg-indigo-500 inline-block" />
+            <span className="w-3.5 h-1.5 rounded-full bg-sky-600 inline-block" />
             <span>{comparisonLabel || t('radarPrevious')}</span>
           </div>
         )}

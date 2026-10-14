@@ -8,14 +8,14 @@ export const PILLARS_ES: Record<PillarId, PillarInfo> = {
     subtitle: 'La base de tu energía y salud diaria',
     iconName: 'Moon',
     color: {
-      text: 'text-indigo-600 dark:text-indigo-400',
-      bg: 'bg-indigo-50 dark:bg-indigo-950/40',
-      border: 'border-indigo-200 dark:border-indigo-800/60',
-      fill: 'bg-indigo-500',
-      ring: 'ring-indigo-500',
-      badge: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300',
-      chartFill: 'rgba(99, 102, 241, 0.25)',
-      chartStroke: '#6366f1',
+      text: 'text-sky-700 dark:text-sky-300',
+      bg: 'bg-sky-50/70 dark:bg-sky-950/40',
+      border: 'border-sky-200/80 dark:border-sky-800/60',
+      fill: 'bg-sky-600',
+      ring: 'ring-sky-500',
+      badge: 'bg-sky-100/80 text-sky-800 dark:bg-sky-900/60 dark:text-sky-200',
+      chartFill: 'rgba(14, 165, 233, 0.22)',
+      chartStroke: '#0284c7',
     },
     idealDescription: '7 a 8 horas de descanso continuo con desconexión previa de pantallas.',
     presentationTakeaway:
@@ -27,14 +27,14 @@ export const PILLARS_ES: Record<PillarId, PillarInfo> = {
     subtitle: 'Combustible vital para cuerpo y mente',
     iconName: 'Apple',
     color: {
-      text: 'text-emerald-600 dark:text-emerald-400',
-      bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-      border: 'border-emerald-200 dark:border-emerald-800/60',
-      fill: 'bg-emerald-500',
+      text: 'text-emerald-700 dark:text-emerald-300',
+      bg: 'bg-emerald-50/70 dark:bg-emerald-950/40',
+      border: 'border-emerald-200/80 dark:border-emerald-800/60',
+      fill: 'bg-emerald-600',
       ring: 'ring-emerald-500',
-      badge: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
-      chartFill: 'rgba(16, 185, 129, 0.25)',
-      chartStroke: '#10b981',
+      badge: 'bg-emerald-100/80 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200',
+      chartFill: 'rgba(16, 185, 129, 0.22)',
+      chartStroke: '#059669',
     },
     idealDescription: 'Dieta equilibrada con alimentos frescos, rica en proteínas, vegetales e hidratación regular.',
     presentationTakeaway:
@@ -46,14 +46,14 @@ export const PILLARS_ES: Record<PillarId, PillarInfo> = {
     subtitle: 'Claridad, sosiego y equilibrio emocional',
     iconName: 'Brain',
     color: {
-      text: 'text-teal-600 dark:text-teal-400',
-      bg: 'bg-teal-50 dark:bg-teal-950/40',
-      border: 'border-teal-200 dark:border-teal-800/60',
-      fill: 'bg-teal-500',
+      text: 'text-teal-700 dark:text-teal-300',
+      bg: 'bg-teal-50/70 dark:bg-teal-950/40',
+      border: 'border-teal-200/80 dark:border-teal-800/60',
+      fill: 'bg-teal-600',
       ring: 'ring-teal-500',
-      badge: 'bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-300',
-      chartFill: 'rgba(20, 184, 166, 0.25)',
-      chartStroke: '#14b8a6',
+      badge: 'bg-teal-100/80 text-teal-800 dark:bg-teal-900/60 dark:text-teal-200',
+      chartFill: 'rgba(20, 184, 166, 0.22)',
+      chartStroke: '#0d9488',
     },
     idealDescription: 'Pausas conscientes, lectura, música relajante y vínculos positivos con familia y amigos.',
     presentationTakeaway:
@@ -65,14 +65,14 @@ export const PILLARS_ES: Record<PillarId, PillarInfo> = {
     subtitle: 'Vitalidad corporal y liberación de endorfinas',
     iconName: 'Activity',
     color: {
-      text: 'text-amber-600 dark:text-amber-400',
-      bg: 'bg-amber-50 dark:bg-amber-950/40',
-      border: 'border-amber-200 dark:border-amber-800/60',
-      fill: 'bg-amber-500',
-      ring: 'ring-amber-500',
-      badge: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
-      chartFill: 'rgba(245, 158, 11, 0.25)',
-      chartStroke: '#f59e0b',
+      text: 'text-cyan-700 dark:text-cyan-300',
+      bg: 'bg-cyan-50/70 dark:bg-cyan-950/40',
+      border: 'border-cyan-200/80 dark:border-cyan-800/60',
+      fill: 'bg-cyan-600',
+      ring: 'ring-cyan-500',
+      badge: 'bg-cyan-100/80 text-cyan-800 dark:bg-cyan-900/60 dark:text-cyan-200',
+      chartFill: 'rgba(6, 182, 212, 0.22)',
+      chartStroke: '#0891b2',
     },
     idealDescription: '30+ minutos diarios de movimiento agradable (caminar, bailar, deporte o entrenamiento).',
     presentationTakeaway:
@@ -562,7 +562,7 @@ export const ARCHETYPES_ES = [
     tagline: 'Buenos destellos con necesidad de mayor armonía',
     description:
       'Tienes intenciones y momentos de autocuidado, pero el ritmo acelerado o la falta de regularidad generan desbalances (por ejemplo, poco descanso o sobrecarga mental). Pequeños micro-ajustes marcarán una gran diferencia.',
-    color: 'amber',
+    color: 'sky',
   },
   {
     minScore: 0,
@@ -570,7 +570,7 @@ export const ARCHETYPES_ES = [
     tagline: 'Una oportunidad perfecta para reinventar tus días',
     description:
       'Tu cuerpo y tu mente te están pidiendo una pausa amable. No se trata de cambiar todo de golpe, sino de aplicar la regla de oro: pequeños cambios diarios generan una transformación gigante.',
-    color: 'rose',
+    color: 'slate',
   },
 ];
 
@@ -597,7 +597,7 @@ export const ARCHETYPES_EN = [
     tagline: 'Promising sparks needing steadier harmony',
     description:
       'You have good self-care intentions, but modern fast-paced living or inconsistent schedules create friction (e.g. sleep debt or stress). Small micro-adjustments will make a world of difference.',
-    color: 'amber',
+    color: 'sky',
   },
   {
     minScore: 0,
@@ -605,7 +605,7 @@ export const ARCHETYPES_EN = [
     tagline: 'A perfect turning point to reinvent your daily habits',
     description:
       'Your mind and body are inviting you to take a gentle breath. You don\'t have to change everything at once: remember the golden rule: small daily changes make a big difference.',
-    color: 'rose',
+    color: 'slate',
   },
 ];
 

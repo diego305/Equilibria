@@ -24,7 +24,7 @@ export function generateEvaluationPDF(result: EvaluationResult, lang: Language =
   doc.rect(0, 0, pageWidth, 38, 'F');
 
   // Decorative subtle accent line
-  doc.setFillColor(13, 148, 136); // Teal 600
+  doc.setFillColor(5, 150, 105); // Emerald 600
   doc.rect(0, 0, pageWidth, 2.5, 'F');
 
   // Brand title
@@ -63,7 +63,7 @@ export function generateEvaluationPDF(result: EvaluationResult, lang: Language =
   doc.roundedRect(margin, currentY, contentWidth, 34, 3, 3, 'FD');
 
   // Score circle/indicator
-  doc.setFillColor(13, 148, 136);
+  doc.setFillColor(5, 150, 105);
   doc.circle(margin + 18, currentY + 17, 12, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);

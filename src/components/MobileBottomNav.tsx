@@ -15,17 +15,17 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   hasResults,
   historyCount,
 }) => {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 transition-colors">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0c1412]/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 transition-colors">
       <div className="grid grid-cols-5 items-center h-16 max-w-md mx-auto px-2">
         <button
           onClick={() => onSelectTab('quiz')}
-          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors ${
+          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors cursor-pointer ${
             currentTab === 'quiz'
-              ? 'text-teal-700 dark:text-teal-300 font-semibold'
-              : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              ? 'text-emerald-700 dark:text-emerald-300 font-semibold'
+              : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
           }`}
         >
           <CheckSquare className="w-5 h-5" />
@@ -34,12 +34,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
         <button
           onClick={() => onSelectTab(hasResults ? 'results' : 'quiz')}
-          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors ${
+          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors cursor-pointer ${
             currentTab === 'results'
-              ? 'text-teal-700 dark:text-teal-300 font-semibold'
+              ? 'text-emerald-700 dark:text-emerald-300 font-semibold'
               : hasResults
-              ? 'text-slate-500 dark:text-slate-400'
-              : 'text-slate-300 dark:text-slate-600'
+              ? 'text-stone-500 dark:text-stone-400'
+              : 'text-stone-300 dark:text-stone-700'
           }`}
         >
           <BarChart2 className="w-5 h-5" />
@@ -48,10 +48,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
         <button
           onClick={() => onSelectTab('compare')}
-          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors ${
+          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors cursor-pointer ${
             currentTab === 'compare'
-              ? 'text-teal-700 dark:text-teal-300 font-semibold'
-              : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              ? 'text-emerald-700 dark:text-emerald-300 font-semibold'
+              : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
           }`}
         >
           <GitCompare className="w-5 h-5" />
@@ -60,16 +60,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
         <button
           onClick={() => onSelectTab('history')}
-          className={`flex flex-col items-center justify-center h-full min-h-[44px] relative transition-colors ${
+          className={`flex flex-col items-center justify-center h-full min-h-[44px] relative transition-colors cursor-pointer ${
             currentTab === 'history'
-              ? 'text-teal-700 dark:text-teal-300 font-semibold'
-              : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              ? 'text-emerald-700 dark:text-emerald-300 font-semibold'
+              : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
           }`}
         >
           <div className="relative">
             <History className="w-5 h-5" />
             {historyCount > 0 && (
-              <span className="absolute -top-1 -right-2 bg-teal-600 text-white text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-2 bg-emerald-700 text-white text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
                 {historyCount}
               </span>
             )}
@@ -79,10 +79,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
         <button
           onClick={() => onSelectTab('guide')}
-          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors ${
+          className={`flex flex-col items-center justify-center h-full min-h-[44px] transition-colors cursor-pointer ${
             currentTab === 'guide'
-              ? 'text-teal-700 dark:text-teal-300 font-semibold'
-              : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              ? 'text-emerald-700 dark:text-emerald-300 font-semibold'
+              : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
           }`}
         >
           <BookOpen className="w-5 h-5" />

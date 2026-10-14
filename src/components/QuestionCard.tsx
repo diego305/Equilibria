@@ -29,17 +29,17 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const pillars = getPillars(language);
   const pillar = pillars[question.pillar];
 
-  // Render proper icon based on question.pillar
+  // Render natural soothing icons
   const renderPillarIcon = (pid: PillarId) => {
     switch (pid) {
       case 'sleep':
-        return <Moon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />;
+        return <Moon className="w-4 h-4 text-sky-600 dark:text-sky-400" />;
       case 'nutrition':
         return <Apple className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
       case 'mind':
         return <Brain className="w-4 h-4 text-teal-600 dark:text-teal-400" />;
       case 'exercise':
-        return <Activity className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
+        return <Activity className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />;
     }
   };
 
@@ -72,12 +72,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       {/* Top Progress & Pillar Bar */}
       <div className="mb-6 space-y-3">
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800">
+            <span className="p-1.5 rounded-lg bg-stone-100 dark:bg-stone-800">
               {renderPillarIcon(question.pillar)}
             </span>
-            <span className="font-semibold text-slate-800 dark:text-slate-200">
+            <span className="font-semibold text-stone-800 dark:text-stone-200">
               {pillar.name}
             </span>
           </div>
@@ -87,22 +87,22 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+        <div className="w-full h-2 rounded-full bg-stone-200/70 dark:bg-stone-800 overflow-hidden">
           <div
-            className="h-full bg-teal-600 dark:bg-teal-500 rounded-full transition-all duration-300 ease-out"
+            className="h-full bg-emerald-600 dark:bg-emerald-500 rounded-full transition-all duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>
 
       {/* Main Question Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm transition-colors">
+      <div className="bg-white dark:bg-[#101917] rounded-3xl p-6 sm:p-8 border border-stone-200/90 dark:border-stone-800 shadow-xs transition-colors">
         {/* Question Header */}
         <div className="space-y-2 mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-snug">
+          <h2 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 leading-snug">
             {question.question}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
             {question.context}
           </p>
         </div>
@@ -116,10 +116,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 key={opt.id}
                 onClick={() => onSelectOption(opt.id)}
                 type="button"
-                className={`w-full min-h-[58px] p-4 rounded-2xl text-left border transition-all flex items-center justify-between gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${
+                className={`w-full min-h-[58px] p-4 rounded-2xl text-left border transition-all flex items-center justify-between gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${
                   isSelected
-                    ? 'border-teal-600 bg-teal-50/70 dark:bg-teal-950/40 dark:border-teal-500 shadow-sm ring-1 ring-teal-500/30'
-                    : 'border-slate-200/90 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/40 dark:border-emerald-500 shadow-xs ring-1 ring-emerald-500/30'
+                    : 'border-stone-200/90 dark:border-stone-800/90 bg-stone-50/40 dark:bg-stone-800/40 hover:bg-stone-100/70 dark:hover:bg-stone-800/80 hover:border-stone-300 dark:hover:border-stone-700'
                 }`}
               >
                 <div className="flex items-center gap-3.5 flex-1 min-w-0">
@@ -127,8 +127,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                   <span
                     className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-semibold shrink-0 transition-colors ${
                       isSelected
-                        ? 'bg-teal-600 text-white dark:bg-teal-500'
-                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                        ? 'bg-emerald-700 text-white dark:bg-emerald-600'
+                        : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-700'
                     }`}
                   >
                     {index + 1}
@@ -138,14 +138,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                     <span
                       className={`text-sm font-medium block leading-snug ${
                         isSelected
-                          ? 'text-teal-950 dark:text-teal-100 font-semibold'
-                          : 'text-slate-800 dark:text-slate-200'
+                          ? 'text-emerald-950 dark:text-emerald-100 font-semibold'
+                          : 'text-stone-800 dark:text-stone-200'
                       }`}
                     >
                       {opt.label}
                     </span>
                     {opt.subtext && (
-                      <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">
+                      <span className="text-xs text-stone-500 dark:text-stone-400 block mt-0.5">
                         {opt.subtext}
                       </span>
                     )}
@@ -155,9 +155,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 {/* Check indicator */}
                 <div className="shrink-0">
                   {isSelected ? (
-                    <CheckCircle2 className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   ) : (
-                    <div className="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-700 group-hover:border-slate-400" />
+                    <div className="w-5 h-5 rounded-full border border-stone-300 dark:border-stone-700 group-hover:border-stone-400" />
                   )}
                 </div>
               </button>
@@ -166,7 +166,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
 
         {/* Keyboard shortcut hint */}
-        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between">
+        <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px] text-stone-400 dark:text-stone-500 flex items-center justify-between">
           <span>{t('tipKeys')}</span>
           <span>{t('tipEnter')}</span>
         </div>
@@ -177,10 +177,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             onClick={onPrev}
             disabled={currentIndex === 0}
             type="button"
-            className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-colors ${
+            className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
               currentIndex === 0
                 ? 'opacity-0 pointer-events-none'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -191,10 +191,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             onClick={onNext}
             disabled={!selectedOptionId}
             type="button"
-            className={`min-h-[44px] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition-all shadow-sm ${
+            className={`min-h-[44px] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition-all shadow-xs cursor-pointer ${
               selectedOptionId
-                ? 'bg-teal-700 hover:bg-teal-800 dark:bg-teal-600 dark:hover:bg-teal-700 text-white cursor-pointer active:scale-[0.98]'
-                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
+                ? 'bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white active:scale-[0.98]'
+                : 'bg-stone-200 dark:bg-stone-800 text-stone-400 dark:text-stone-600 cursor-not-allowed'
             }`}
           >
             <span>{isLast ? t('btnSeeResults') : t('btnNext')}</span>

@@ -39,6 +39,11 @@ export const TRANSLATIONS = {
     btnResume: 'Continuar test en curso',
     quizDetails: '16 preguntas breves · ~3-4 minutos',
     linkGuide: 'Ver guía de los 4 pilares',
+    btnMarkdownQuestions: '16 Preguntas',
+    btnViewQuestionsMd: 'Ver las 16 Preguntas y Opciones',
+    mdModalTitle: 'Cuestionario Completo (16 Preguntas)',
+    mdModalSubtitle: 'Preguntas con opciones múltiples, justificación científica y baremo de puntuación',
+    mdClose: 'Cerrar',
 
     // Question Card
     questionOf: 'de',
@@ -93,8 +98,8 @@ export const TRANSLATIONS = {
     compareEvalA: 'Evaluación Principal (A)',
     compareEvalB: 'Evaluación de Comparación (B)',
     superimposedRadar: 'Radar Superpuesto',
-    radarSurfaceTeal: 'Superficie teal',
-    radarSurfaceIndigo: 'Superficie índigo',
+    radarSurfaceTeal: 'Área verde calma',
+    radarSurfaceIndigo: 'Área azul sereno',
     barCompareTitle: 'Comparativa de Barras por Pilar',
     barCompareDesc: 'Línea vertical punteada en 80%: meta de salud óptima.',
     historyTimelineTitle: 'Historial Cronológico de Evaluaciones',
@@ -130,6 +135,22 @@ export const TRANSLATIONS = {
     // Footer
     footerSub: 'Medición Libre de Buenos Hábitos Saludables',
     footerPillars: 'Sueño · Alimentación · Salud Mental · Ejercicio Físico',
+
+    // Google Sheets Integration & Database
+    dbTabLocal: 'Almacenamiento Local',
+    dbTabSheets: 'Google Sheets (Base de Datos)',
+    btnSaveToSheets: 'Guardar en Sheets',
+    btnRemoveFromSheets: 'Quitar de Sheets',
+    savedInSheets: 'En Google Sheets ✓',
+    btnSyncAllToSheets: 'Subir todo a Google Sheets',
+    noSheetsRecordsTitle: 'Aún no hay registros en tu Google Sheets',
+    noSheetsRecordsDesc: 'Completa una prueba o sube tus registros locales para guardarlos en tu hoja de cálculo.',
+    sheetDbTitle: 'Base de Datos de Evaluaciones',
+    sheetDbDesc: 'Tus evaluaciones guardadas en tu propia hoja de cálculo de Google Drive.',
+    confirmDeleteTitle: '¿Quitar registro de Google Sheets?',
+    confirmDeleteDesc: 'Esta acción eliminará permanentemente la fila de esta evaluación en tu hoja de cálculo de Google Sheets.',
+    confirmClearSheetTitle: '¿Vaciar base de datos de Google Sheets?',
+    confirmClearSheetDesc: 'Esta acción eliminará todas las filas de evaluaciones en tu hoja de cálculo. Se mantendrán los encabezados.',
 
     // Language Toggle
     langLabel: 'Idioma',
@@ -174,6 +195,11 @@ export const TRANSLATIONS = {
     btnResume: 'Resume in-progress test',
     quizDetails: '16 concise questions · ~3-4 minutes',
     linkGuide: 'View 4 pillars guide',
+    btnMarkdownQuestions: '16 Questions',
+    btnViewQuestionsMd: 'View all 16 Questions & Choices',
+    mdModalTitle: 'Complete Questionnaire (16 Questions)',
+    mdModalSubtitle: 'Questions with multiple choices, scientific rationale, and scoring scale',
+    mdClose: 'Close',
 
     // Question Card
     questionOf: 'of',
@@ -228,8 +254,8 @@ export const TRANSLATIONS = {
     compareEvalA: 'Primary Evaluation (A)',
     compareEvalB: 'Comparison Evaluation (B)',
     superimposedRadar: 'Overlaid Radar Chart',
-    radarSurfaceTeal: 'Teal area',
-    radarSurfaceIndigo: 'Indigo area',
+    radarSurfaceTeal: 'Calm green area',
+    radarSurfaceIndigo: 'Serene blue area',
     barCompareTitle: 'Bar Comparison by Pillar',
     barCompareDesc: 'Dashed vertical line at 80%: optimal health benchmark.',
     historyTimelineTitle: 'Chronological Assessment Timeline',
@@ -265,6 +291,22 @@ export const TRANSLATIONS = {
     // Footer
     footerSub: 'Free Healthy Habits Assessment',
     footerPillars: 'Sleep · Food · Mental Health · Physical Exercise',
+
+    // Google Sheets Integration & Database
+    dbTabLocal: 'Local Storage',
+    dbTabSheets: 'Google Sheets (Database)',
+    btnSaveToSheets: 'Save to Sheets',
+    btnRemoveFromSheets: 'Remove from Sheets',
+    savedInSheets: 'In Google Sheets ✓',
+    btnSyncAllToSheets: 'Upload all to Google Sheets',
+    noSheetsRecordsTitle: 'No records in your Google Sheets yet',
+    noSheetsRecordsDesc: 'Complete an assessment or upload local records to save them to your spreadsheet.',
+    sheetDbTitle: 'Assessments Database',
+    sheetDbDesc: 'Your assessments stored in your own Google Drive spreadsheet.',
+    confirmDeleteTitle: 'Remove record from Google Sheets?',
+    confirmDeleteDesc: 'This action will permanently delete this assessment row from your Google Sheet.',
+    confirmClearSheetTitle: 'Clear Google Sheets database?',
+    confirmClearSheetDesc: 'This action will delete all assessment rows in your spreadsheet. Header rows will be preserved.',
 
     // Language Toggle
     langLabel: 'Language',

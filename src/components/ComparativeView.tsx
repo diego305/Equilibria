@@ -41,18 +41,18 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
   if (allList.length === 0) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
           <GitCompare className="w-8 h-8" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+        <h2 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100">
           {t('noEvalsToCompareTitle')}
         </h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+        <p className="text-sm text-stone-500 dark:text-stone-400 max-w-md mx-auto">
           {t('noEvalsToCompareDesc')}
         </p>
         <button
           onClick={onTakeNewTest}
-          className="mt-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 dark:bg-teal-600 dark:hover:bg-teal-700 text-white font-medium text-sm transition-all shadow-sm"
+          className="mt-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-medium text-sm transition-all shadow-xs cursor-pointer"
         >
           {t('btnStartFirstTest')}
         </button>
@@ -79,7 +79,7 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
       );
     }
     return (
-      <span className="flex items-center gap-0.5 text-xs font-semibold text-slate-400 font-mono tabular-nums">
+      <span className="flex items-center gap-0.5 text-xs font-semibold text-stone-400 font-mono tabular-nums">
         <Minus className="w-3.5 h-3.5" />
         0%
       </span>
@@ -89,30 +89,30 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8">
       {/* Title & Selectors */}
-      <div className="border-b border-slate-200/80 dark:border-slate-800 pb-6 space-y-4">
+      <div className="border-b border-stone-200/80 dark:border-stone-800 pb-6 space-y-4">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+          <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
             {t('compareKicker')}
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-0.5">
+          <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100 mt-0.5">
             {t('compareTitle')}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
             {t('compareDesc')}
           </p>
         </div>
 
         {/* Dropdown selectors for comparing 2 tests */}
         {allList.length >= 2 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/80 dark:border-stone-700/60">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1.5">
                 {t('compareEvalA')}
               </label>
               <select
                 value={selectedIdA}
                 onChange={(e) => setSelectedIdA(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#101917] text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {allList.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -124,13 +124,13 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1.5">
                 {t('compareEvalB')}
               </label>
               <select
                 value={selectedIdB}
                 onChange={(e) => setSelectedIdB(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#101917] text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {allList.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -149,15 +149,15 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
           {/* Main Comparison Visuals */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Superimposed Radar Spider Chart */}
-            <div className="lg:col-span-6 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col items-center">
+            <div className="lg:col-span-6 bg-white dark:bg-[#101917] rounded-3xl p-6 sm:p-8 border border-stone-200/90 dark:border-stone-800 shadow-xs flex flex-col items-center">
               <div className="w-full mb-3">
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">
                   {t('superimposedRadar')}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {t('radarSurfaceTeal')}: {evalA.userName} ({evalA.totalScore}%)
+                <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400">{evalA.userName} ({evalA.totalScore}%)</span>
                   {evalB && evalB.id !== evalA.id && (
-                    <span> · {t('radarSurfaceIndigo')}: {evalB.userName} ({evalB.totalScore}%)</span>
+                    <span> · <span className="font-semibold text-sky-700 dark:text-sky-400">{evalB.userName} ({evalB.totalScore}%)</span></span>
                   )}
                 </p>
               </div>
@@ -171,12 +171,12 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
             </div>
 
             {/* Side-by-side Pillar Comparison Bars */}
-            <div className="lg:col-span-6 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-5">
+            <div className="lg:col-span-6 bg-white dark:bg-[#101917] rounded-3xl p-6 sm:p-8 border border-stone-200/90 dark:border-stone-800 shadow-xs space-y-5">
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">
                   {t('barCompareTitle')}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                   {t('barCompareDesc')}
                 </p>
               </div>
@@ -190,34 +190,34 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
                   return (
                     <div key={pid} className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200">
+                        <span className="font-semibold text-stone-800 dark:text-stone-200">
                           {pillar.name}
                         </span>
                         {evalB && evalB.id !== evalA.id && renderDelta(scoreA, scoreB)}
                       </div>
 
-                      {/* Bar A */}
-                      <div className="relative w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      {/* Bar A (Emerald) */}
+                      <div className="relative w-full h-3 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
                         {/* 80% mark */}
                         <div className="absolute top-0 bottom-0 left-[80%] w-0.5 bg-emerald-500/80 z-10" />
                         <div
-                          className="h-full bg-teal-600 dark:bg-teal-500 rounded-full transition-all duration-500"
+                          className="h-full bg-emerald-600 dark:bg-emerald-500 rounded-full transition-all duration-500"
                           style={{ width: `${scoreA}%` }}
                         />
                       </div>
 
-                      {/* Bar B if comparing */}
+                      {/* Bar B if comparing (Calm Sky Blue) */}
                       {evalB && evalB.id !== evalA.id && (
-                        <div className="relative w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden opacity-80">
+                        <div className="relative w-full h-2.5 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden opacity-90">
                           <div className="absolute top-0 bottom-0 left-[80%] w-0.5 bg-emerald-500/80 z-10" />
                           <div
-                            className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                            className="h-full bg-sky-600 dark:bg-sky-500 rounded-full transition-all duration-500"
                             style={{ width: `${scoreB}%` }}
                           />
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono tabular-nums">
+                      <div className="flex items-center justify-between text-[10px] text-stone-500 dark:text-stone-400 font-mono tabular-nums">
                         <span>{evalA.userName}: {scoreA}%</span>
                         {evalB && evalB.id !== evalA.id && <span>{evalB.userName}: {scoreB}%</span>}
                       </div>
@@ -227,17 +227,17 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
               </div>
 
               {/* Summary table */}
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+              <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs">
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Total {evalA.userName}: </span>
-                  <span className="font-bold text-teal-700 dark:text-teal-400 font-mono tabular-nums">
+                  <span className="text-stone-500 dark:text-stone-400">Total {evalA.userName}: </span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400 font-mono tabular-nums">
                     {evalA.totalScore}%
                   </span>
                 </div>
                 {evalB && evalB.id !== evalA.id && (
                   <div>
-                    <span className="text-slate-500 dark:text-slate-400">Total {evalB.userName}: </span>
-                    <span className="font-bold text-indigo-600 dark:text-indigo-400 font-mono tabular-nums">
+                    <span className="text-stone-500 dark:text-stone-400">Total {evalB.userName}: </span>
+                    <span className="font-bold text-sky-700 dark:text-sky-400 font-mono tabular-nums">
                       {evalB.totalScore}%
                     </span>
                   </div>
@@ -247,29 +247,29 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
           </div>
 
           {/* Timeline of evaluations */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <div className="bg-white dark:bg-[#101917] rounded-3xl p-6 sm:p-8 border border-stone-200/90 dark:border-stone-800 shadow-xs space-y-4">
+            <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">
               {t('historyTimelineTitle')} ({allList.length})
             </h3>
 
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-stone-100 dark:divide-stone-800">
               {allList.map((item, index) => (
                 <div
                   key={item.id}
-                  className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50/70 dark:hover:bg-slate-800/40 px-2 rounded-xl transition-colors"
+                  className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-stone-50/70 dark:hover:bg-stone-800/40 px-2 rounded-xl transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/70 text-teal-700 dark:text-teal-300 flex items-center justify-center font-bold text-xs">
+                    <span className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold text-xs">
                       #{index + 1}
                     </span>
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
+                      <h4 className="text-sm font-semibold text-stone-900 dark:text-stone-100">
                         {item.userName}
                       </h4>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                         <span>{new Date(item.date).toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES')}</span>
                         <span>·</span>
-                        <span className="text-slate-700 dark:text-slate-300 font-medium">
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">
                           {item.archetypeTitle}
                         </span>
                       </div>
@@ -278,14 +278,14 @@ export const ComparativeView: React.FC<ComparativeViewProps> = ({
 
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <span className="text-base font-extrabold font-mono tabular-nums text-teal-700 dark:text-teal-400">
+                      <span className="text-base font-extrabold font-mono tabular-nums text-emerald-700 dark:text-emerald-400">
                         {item.totalScore}%
                       </span>
                     </div>
 
                     <button
                       onClick={() => onSelectEvaluation(item.id)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/50 transition-colors flex items-center gap-1"
+                      className="px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-800 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <span>{t('btnViewReport')}</span>
                       <ArrowRight className="w-3.5 h-3.5" />

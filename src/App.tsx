@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { GoogleSheetsProvider, useGoogleSheets } from './context/GoogleSheetsContext';
 import { Header } from './components/Header';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { HeroIntro } from './components/HeroIntro';
@@ -9,6 +10,7 @@ import { ResultsOverview } from './components/ResultsOverview';
 import { ComparativeView } from './components/ComparativeView';
 import { HistoryView } from './components/HistoryView';
 import { HabitPillarGuide } from './components/HabitPillarGuide';
+import { QuestionsMarkdownModal } from './components/QuestionsMarkdownModal';
 import { getQuestions, calculateEvaluation } from './data/wellnessData';
 import { EvaluationResult, StoredEvaluation } from './types/wellness';
 import {
@@ -20,9 +22,18 @@ import {
   saveInProgressState,
   clearInProgressState,
 } from './utils/storage';
+import { OwnerSheetConfigModal } from './components/OwnerSheetConfigModal';
+import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 
 function WellnessApp() {
   const { language, t } = useLanguage();
+  const {
+    sheetRecords,
+    statusMessage,
+    clearStatusMessage,
+    isConfigModalOpen,
+    setIsConfigModalOpen,
+  } = useGoogleSheets();
   const [currentTab, setCurrentTab] = useState<'quiz' | 'results' | 'compare' | 'history' | 'guide'>('quiz');
   const [userName, setUserName] = useState<string>('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -31,6 +42,7 @@ function WellnessApp() {
   const [currentResult, setCurrentResult] = useState<EvaluationResult | null>(null);
   const [storedEvaluations, setStoredEvaluations] = useState<StoredEvaluation[]>([]);
   const [hasResume, setHasResume] = useState<boolean>(false);
+  const [isMarkdownModalOpen, setIsMarkdownModalOpen] = useState<boolean>(false);
 
   const questions = getQuestions(language);
 
@@ -139,9 +151,11 @@ function WellnessApp() {
     setCurrentTab('quiz');
   };
 
-  // Select a past evaluation from history or comparison
+  // Select a past evaluation from history, comparison, or Google Sheets database
   const handleSelectEvaluation = (evalId: string) => {
-    const found = storedEvaluations.find((e) => e.id === evalId);
+    const found =
+      storedEvaluations.find((e) => e.id === evalId) ||
+      sheetRecords.find((e) => e.id === evalId);
     if (found) {
       const regenerated = calculateEvaluation(found.answers, found.userName, language);
       regenerated.id = found.id;
@@ -170,7 +184,7 @@ function WellnessApp() {
   const currentQ = questions[currentQuestionIndex] || questions[0];
 
   return (
-    <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col transition-colors selection:bg-teal-100 dark:selection:bg-teal-900/40">
+    <div className="min-h-screen bg-[#F8FAF9] dark:bg-[#0c1412] text-stone-800 dark:text-stone-100 flex flex-col transition-colors selection:bg-emerald-100 dark:selection:bg-emerald-950/60">
       {/* Top Header */}
       <Header
         currentTab={currentTab}
@@ -182,6 +196,7 @@ function WellnessApp() {
           }
         }}
         onResetTest={handleResetTest}
+        onOpenQuestionsMd={() => setIsMarkdownModalOpen(true)}
         hasResults={currentResult !== null}
         historyCount={storedEvaluations.length}
       />
@@ -198,6 +213,7 @@ function WellnessApp() {
                 hasResume={hasResume}
                 onResume={handleResumeTest}
                 onOpenGuide={() => setCurrentTab('guide')}
+                onOpenQuestionsMd={() => setIsMarkdownModalOpen(true)}
               />
             ) : (
               <QuestionCard
@@ -260,14 +276,14 @@ function WellnessApp() {
       </main>
 
       {/* Quiet Footer */}
-      <footer className="border-t border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400 no-print transition-colors">
+      <footer className="border-t border-stone-200/80 dark:border-stone-800/80 bg-white/70 dark:bg-[#101917]/70 backdrop-blur-sm py-6 text-center text-xs text-stone-500 dark:text-stone-400 no-print transition-colors">
         <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-800 dark:text-slate-200">{t('appName')}</span>
+            <span className="font-semibold text-stone-800 dark:text-stone-200">{t('appName')}</span>
             <span>·</span>
             <span>{t('footerSub')}</span>
           </div>
-          <div className="text-[11px] text-slate-400 dark:text-slate-500">
+          <div className="text-[11px] text-stone-400 dark:text-stone-500">
             {t('footerPillars')}
           </div>
         </div>
@@ -286,6 +302,48 @@ function WellnessApp() {
         hasResults={currentResult !== null}
         historyCount={storedEvaluations.length}
       />
+
+      {/* 16 Questions & Answers Markdown Modal */}
+      <QuestionsMarkdownModal
+        isOpen={isMarkdownModalOpen}
+        onClose={() => setIsMarkdownModalOpen(false)}
+      />
+
+      {/* Owner Google Sheet Configuration Modal for Third Parties / Testers */}
+      <OwnerSheetConfigModal
+        isOpen={isConfigModalOpen}
+        onClose={() => setIsConfigModalOpen(false)}
+      />
+
+      {/* Floating Status Notification Toast */}
+      {statusMessage && (
+        <div
+          className={`fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 max-w-md p-4 rounded-2xl shadow-xl border flex items-start gap-3 animate-in slide-in-from-bottom-3 duration-200 transition-all ${
+            statusMessage.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100'
+              : statusMessage.type === 'error'
+              ? 'bg-rose-50 dark:bg-rose-950 border-rose-200 dark:border-rose-800 text-rose-950 dark:text-rose-100'
+              : 'bg-stone-50 dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100'
+          }`}
+          role="alert"
+        >
+          <div className="shrink-0 mt-0.5">
+            {statusMessage.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />}
+            {statusMessage.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />}
+            {statusMessage.type === 'info' && <Info className="w-5 h-5 text-stone-500" />}
+          </div>
+          <div className="flex-1 text-xs sm:text-sm leading-snug">
+            {statusMessage.text}
+          </div>
+          <button
+            onClick={clearStatusMessage}
+            className="shrink-0 p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 cursor-pointer"
+            aria-label="Cerrar notificación"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -294,8 +352,11 @@ export default function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <WellnessApp />
+        <GoogleSheetsProvider>
+          <WellnessApp />
+        </GoogleSheetsProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
 }
+

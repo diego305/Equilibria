@@ -60,13 +60,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     themePreference === 'dark' ||
     (themePreference === 'auto' && (isSystemDark || isNightTime));
 
+  // Synchronize both html and body classes and data-theme attribute
   useEffect(() => {
     const root = document.documentElement;
+    const body = document.body;
+
     if (isDark) {
       root.classList.add('dark');
+      body?.classList.add('dark');
+      root.setAttribute('data-theme', 'dark');
       root.style.colorScheme = 'dark';
     } else {
       root.classList.remove('dark');
+      body?.classList.remove('dark');
+      root.removeAttribute('data-theme');
       root.style.colorScheme = 'light';
     }
   }, [isDark]);
@@ -81,8 +88,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const toggleTheme = () => {
-    // When the user clicks the toggle, immediately invert the active visual mode
-    const nextTheme = isDark ? 'light' : 'dark';
+    // Directly invert the active visual mode between light and dark
+    const nextTheme: ThemePreference = isDark ? 'light' : 'dark';
     setThemePreference(nextTheme);
   };
 
