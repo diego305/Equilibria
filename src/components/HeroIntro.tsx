@@ -17,9 +17,12 @@ import {
   Database,
   Sparkles,
   Info,
+  HelpCircle,
+  BookOpen,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useGoogleSheets } from '../context/GoogleSheetsContext';
+import { StepByStepGuideModal } from './StepByStepGuideModal';
 
 interface HeroIntroProps {
   userName: string;
@@ -55,6 +58,7 @@ export const HeroIntro: React.FC<HeroIntroProps> = ({
 
   // Step 1: Name registration · Step 2: Google Sheets storage activation
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+  const [isStepByStepOpen, setIsStepByStepOpen] = useState(false);
 
   const isEn = language === 'en';
 
@@ -219,25 +223,37 @@ export const HeroIntro: React.FC<HeroIntroProps> = ({
             </div>
 
             {/* Buttons for Step 1 */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                type="submit"
-                className="flex-1 py-3.5 px-6 rounded-xl bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all transform active:scale-[0.99] cursor-pointer"
-              >
-                <span>{t('btnNextStepSheets')}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              {hasResume && (
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  type="button"
-                  onClick={onResume}
-                  className="py-3.5 px-5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800/80 font-medium text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  type="submit"
+                  className="flex-1 py-3.5 px-6 rounded-xl bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all transform active:scale-[0.99] cursor-pointer"
                 >
-                  <RotateCcw className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span>{t('btnResume')}</span>
+                  <span>{t('btnNextStepSheets')}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
-              )}
+
+                {hasResume && (
+                  <button
+                    type="button"
+                    onClick={onResume}
+                    className="py-3.5 px-5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800/80 font-medium text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    <span>{t('btnResume')}</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Botón secundario con el paso a paso para registrarte, activar el almacenamiento y completar el cuestionario */}
+              <button
+                type="button"
+                onClick={() => setIsStepByStepOpen(true)}
+                className="w-full py-3 px-4 rounded-xl border border-emerald-300/80 dark:border-emerald-800/80 bg-emerald-50/60 hover:bg-emerald-100/70 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs group"
+              >
+                <HelpCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
+                <span className="truncate">{t('btnStepByStepGuide')}</span>
+              </button>
             </div>
           </form>
         )}
@@ -383,23 +399,35 @@ export const HeroIntro: React.FC<HeroIntroProps> = ({
             </div>
 
             {/* Action Buttons for Step 2 */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleStartQuizFromStep2}
-                className="flex-1 py-3.5 px-6 rounded-xl bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all transform active:scale-[0.99] cursor-pointer"
-              >
-                <Play className="w-4 h-4 fill-current" />
-                <span>{t('btnStartQuizWithSheets')}</span>
-              </button>
+            <div className="space-y-2.5 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={handleStartQuizFromStep2}
+                  className="flex-1 py-3.5 px-6 rounded-xl bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-xs transition-all transform active:scale-[0.99] cursor-pointer"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>{t('btnStartQuizWithSheets')}</span>
+                </button>
 
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(1)}
+                  className="py-3.5 px-4 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 font-medium text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>{t('btnBackToName')}</span>
+                </button>
+              </div>
+
+              {/* Secondary button: step-by-step guide */}
               <button
                 type="button"
-                onClick={() => setCurrentStep(1)}
-                className="py-3.5 px-4 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 font-medium text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                onClick={() => setIsStepByStepOpen(true)}
+                className="w-full py-2.5 px-3 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/70 hover:bg-emerald-50/60 dark:bg-stone-900/40 dark:hover:bg-emerald-950/20 text-stone-600 dark:text-stone-400 hover:text-emerald-700 dark:hover:text-emerald-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span>{t('btnBackToName')}</span>
+                <HelpCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>{t('btnStepByStepGuide')}</span>
               </button>
             </div>
           </div>
@@ -408,7 +436,16 @@ export const HeroIntro: React.FC<HeroIntroProps> = ({
         {/* Secondary helper info */}
         <div className="pt-2 border-t border-stone-100 dark:border-stone-800/80 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-500 dark:text-stone-400">
           <span>{t('quizDetails')}</span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setIsStepByStepOpen(true)}
+              className="text-emerald-700 dark:text-emerald-400 hover:underline font-semibold cursor-pointer flex items-center gap-1"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>{t('btnStepByStepShort')}</span>
+            </button>
+            <span>·</span>
             <button
               onClick={onOpenQuestionsMd}
               className="text-emerald-700 dark:text-emerald-400 hover:underline font-medium cursor-pointer flex items-center gap-1"
@@ -426,6 +463,19 @@ export const HeroIntro: React.FC<HeroIntroProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Step by step guide modal */}
+      <StepByStepGuideModal
+        isOpen={isStepByStepOpen}
+        onClose={() => setIsStepByStepOpen(false)}
+        onStartRegistration={() => {
+          setCurrentStep(1);
+          setTimeout(() => {
+            const input = document.getElementById('userName');
+            if (input) input.focus();
+          }, 100);
+        }}
+      />
     </div>
   );
 };
