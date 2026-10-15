@@ -33,6 +33,7 @@ function WellnessApp() {
     clearStatusMessage,
     isConfigModalOpen,
     setIsConfigModalOpen,
+    saveRecord,
   } = useGoogleSheets();
   const [currentTab, setCurrentTab] = useState<'quiz' | 'results' | 'compare' | 'history' | 'guide'>('quiz');
   const [userName, setUserName] = useState<string>('');
@@ -43,6 +44,23 @@ function WellnessApp() {
   const [storedEvaluations, setStoredEvaluations] = useState<StoredEvaluation[]>([]);
   const [hasResume, setHasResume] = useState<boolean>(false);
   const [isMarkdownModalOpen, setIsMarkdownModalOpen] = useState<boolean>(false);
+  const [autoSaveToSheets, setAutoSaveToSheets] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('equilibria_autosave_sheets');
+      return saved !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const handleToggleAutoSave = (val: boolean) => {
+    setAutoSaveToSheets(val);
+    try {
+      localStorage.setItem('equilibria_autosave_sheets', String(val));
+    } catch (e) {
+      console.warn('Could not persist autoSaveToSheets preference', e);
+    }
+  };
 
   const questions = getQuestions(language);
 
@@ -131,6 +149,13 @@ function WellnessApp() {
       setHasResume(false);
       setIsQuizActive(false);
       setCurrentTab('results');
+
+      // Auto-save to Google Sheets if user activated it in the registration step
+      if (autoSaveToSheets) {
+        saveRecord(result).catch((err) => {
+          console.warn('Auto-save to Google Sheets failed or deferred:', err);
+        });
+      }
     }
   };
 
@@ -214,6 +239,8 @@ function WellnessApp() {
                 onResume={handleResumeTest}
                 onOpenGuide={() => setCurrentTab('guide')}
                 onOpenQuestionsMd={() => setIsMarkdownModalOpen(true)}
+                autoSaveToSheets={autoSaveToSheets}
+                setAutoSaveToSheets={handleToggleAutoSave}
               />
             ) : (
               <QuestionCard
