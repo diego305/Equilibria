@@ -8,6 +8,7 @@ import { HeroIntro } from './components/HeroIntro';
 import { QuestionCard } from './components/QuestionCard';
 import { ResultsOverview } from './components/ResultsOverview';
 import { ComparativeView } from './components/ComparativeView';
+import { ParticipantsDashboard } from './components/ParticipantsDashboard';
 import { HistoryView } from './components/HistoryView';
 import { HabitPillarGuide } from './components/HabitPillarGuide';
 import { QuestionsMarkdownModal } from './components/QuestionsMarkdownModal';
@@ -267,8 +268,9 @@ function WellnessApp() {
         )}
 
         {currentTab === 'compare' && (
-          <ComparativeView
+          <ParticipantsDashboard
             storedEvaluations={storedEvaluations}
+            sheetRecords={sheetRecords}
             currentEvaluation={
               currentResult
                 ? {

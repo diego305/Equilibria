@@ -55,7 +55,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           }`}
         >
           <GitCompare className="w-5 h-5" />
-          <span className="text-[10px] tracking-tight mt-1">{language === 'en' ? 'Compare' : 'Comparar'}</span>
+          <span className="text-[10px] tracking-tight mt-1">Dashboard</span>
         </button>
 
         <button
