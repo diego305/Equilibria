@@ -52,6 +52,19 @@ export async function findExistingSpreadsheet(accessToken: string): Promise<Spre
   }
 }
 
+export const HEADER_ROW_VALUES = [
+  'ID de Evaluación',
+  'Fecha y Hora',
+  'Nombre de Participante',
+  'Puntuación Total (%)',
+  'Sueño (%)',
+  'Alimentación (%)',
+  'Salud Mental (%)',
+  'Ejercicio (%)',
+  'Arquetipo de Bienestar',
+  'Respuestas Registradas (JSON)',
+];
+
 /**
  * Fetch sheetId (numeric ID needed for deleteDimension batchUpdate)
  */
@@ -66,7 +79,7 @@ export async function getNumericSheetId(accessToken: string, spreadsheetId: stri
     if (res.ok) {
       const data = await res.json();
       const targetSheet = data.sheets?.find(
-        (s: any) => s.properties?.title === SHEET_NAME
+        (s: any) => s.properties?.title?.trim().toLowerCase() === SHEET_NAME.toLowerCase()
       ) || data.sheets?.[0];
       if (targetSheet?.properties?.sheetId !== undefined) {
         return targetSheet.properties.sheetId;
@@ -76,6 +89,134 @@ export async function getNumericSheetId(accessToken: string, spreadsheetId: stri
     console.error('Error fetching numeric sheet ID:', err);
   }
   return 0; // Default first sheet is 0
+}
+
+/**
+ * Ensures the target spreadsheet has the 'Evaluaciones' tab and header row properly configured.
+ * Handles existing sheets, user custom sheets, or sheets without the 'Evaluaciones' tab.
+ */
+export async function ensureEvaluationsSheet(
+  accessToken: string,
+  spreadsheetId: string
+): Promise<{ sheetTitle: string; sheetNumericId: number }> {
+  const metaRes = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=sheets(properties(sheetId,title,gridProperties))`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }
+  );
+
+  if (!metaRes.ok) {
+    if (metaRes.status === 401) {
+      throw new Error('SESION_EXPIRADA: La sesión de Google ha expirado. Vuelve a iniciar sesión con tu cuenta de Google.');
+    }
+    if (metaRes.status === 403) {
+      throw new Error('PERMISO_DENEGADO: No tienes permisos para acceder o modificar esta hoja de Google Sheets. Asegúrate de tener permisos de editor.');
+    }
+    if (metaRes.status === 404) {
+      throw new Error('HOJA_NO_ENCONTRADA: La hoja de cálculo especificada no existe o fue eliminada de Google Drive.');
+    }
+    const err = await metaRes.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `Error al acceder a Google Sheets (${metaRes.status})`);
+  }
+
+  const meta = await metaRes.json();
+  const sheets: any[] = meta.sheets || [];
+
+  // Look for existing "Evaluaciones" tab
+  let targetSheet = sheets.find(
+    (s: any) => s.properties?.title?.trim().toLowerCase() === SHEET_NAME.toLowerCase()
+  );
+
+  // If not found, add the "Evaluaciones" tab
+  if (!targetSheet) {
+    try {
+      const addRes = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            requests: [
+              {
+                addSheet: {
+                  properties: {
+                    title: SHEET_NAME,
+                    gridProperties: {
+                      frozenRowCount: 1,
+                    },
+                  },
+                },
+              },
+            ],
+          }),
+        }
+      );
+
+      if (addRes.ok) {
+        const addData = await addRes.json();
+        const createdSheet = addData.replies?.[0]?.addSheet?.properties;
+        targetSheet = {
+          properties: {
+            title: SHEET_NAME,
+            sheetId: createdSheet?.sheetId ?? 0,
+          },
+        };
+      } else {
+        // Fallback to first sheet if adding is disallowed
+        targetSheet = sheets[0];
+      }
+    } catch {
+      targetSheet = sheets[0];
+    }
+  }
+
+  const finalTitle = targetSheet?.properties?.title || SHEET_NAME;
+  const finalSheetId = targetSheet?.properties?.sheetId ?? 0;
+
+  // Verify headers on row 1
+  try {
+    const escapedTitle = `'${finalTitle.replace(/'/g, "''")}'`;
+    const checkHeadersRes = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
+        `${escapedTitle}!A1:J1`
+      )}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+
+    if (checkHeadersRes.ok) {
+      const hData = await checkHeadersRes.json();
+      const vals: any[][] = hData.values || [];
+      if (!vals || vals.length === 0 || !vals[0] || vals[0].length === 0 || !vals[0][0]) {
+        // Set header row
+        await fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
+            `${escapedTitle}!A1:J1`
+          )}?valueInputOption=USER_ENTERED`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ values: [HEADER_ROW_VALUES] }),
+          }
+        );
+      }
+    }
+  } catch (headerErr) {
+    console.warn('Could not verify headers, continuing:', headerErr);
+  }
+
+  return {
+    sheetTitle: finalTitle,
+    sheetNumericId: finalSheetId,
+  };
 }
 
 /**
@@ -106,6 +247,9 @@ export async function createEvaluationsSpreadsheet(accessToken: string): Promise
   });
 
   if (!createRes.ok) {
+    if (createRes.status === 401) {
+      throw new Error('SESION_EXPIRADA: Tu sesión de Google ha expirado. Vuelve a iniciar sesión.');
+    }
     const errData = await createRes.json().catch(() => ({}));
     throw new Error(errData?.error?.message || `Error al crear hoja de cálculo (${createRes.status})`);
   }
@@ -115,32 +259,17 @@ export async function createEvaluationsSpreadsheet(accessToken: string): Promise
   const sheetNumericId = created.sheets?.[0]?.properties?.sheetId ?? 0;
 
   // Insert Header row with descriptive columns
-  const headerValues = [
-    [
-      'ID de Evaluación',
-      'Fecha y Hora',
-      'Nombre de Participante',
-      'Puntuación Total (%)',
-      'Sueño (%)',
-      'Alimentación (%)',
-      'Salud Mental (%)',
-      'Ejercicio (%)',
-      'Arquetipo de Bienestar',
-      'Respuestas Registradas (JSON)',
-    ],
-  ];
-
   await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
-      SHEET_NAME
-    )}!A1:J1?valueInputOption=USER_ENTERED`,
+      `'${SHEET_NAME}'!A1:J1`
+    )}?valueInputOption=USER_ENTERED`,
     {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ values: headerValues }),
+      body: JSON.stringify({ values: [HEADER_ROW_VALUES] }),
     }
   );
 
@@ -212,7 +341,7 @@ export async function getOrCreateSpreadsheet(
 ): Promise<SpreadsheetMetadata> {
   const targetId = customSpreadsheetId || getStoredOwnerConfig().spreadsheetId;
   if (targetId) {
-    const sheetNumericId = await getNumericSheetId(accessToken, targetId);
+    const { sheetNumericId } = await ensureEvaluationsSheet(accessToken, targetId);
     return {
       id: targetId,
       name: SPREADSHEET_NAME,
@@ -223,8 +352,8 @@ export async function getOrCreateSpreadsheet(
 
   const existing = await findExistingSpreadsheet(accessToken);
   if (existing) {
-    const sheetId = await getNumericSheetId(accessToken, existing.id);
-    return { ...existing, sheetId };
+    const { sheetNumericId } = await ensureEvaluationsSheet(accessToken, existing.id);
+    return { ...existing, sheetId: sheetNumericId };
   }
   return createEvaluationsSpreadsheet(accessToken);
 }
@@ -236,7 +365,11 @@ export async function fetchEvaluationsFromSheet(
   accessToken: string,
   spreadsheetId: string
 ): Promise<SheetEvaluationRecord[]> {
-  const range = `${encodeURIComponent(SHEET_NAME)}!A2:J500`;
+  const { sheetTitle } = await ensureEvaluationsSheet(accessToken, spreadsheetId).catch(() => ({
+    sheetTitle: SHEET_NAME,
+  }));
+  const escapedTitle = `'${sheetTitle.replace(/'/g, "''")}'`;
+  const range = encodeURIComponent(`${escapedTitle}!A2:J`);
   const res = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
     {
@@ -245,6 +378,9 @@ export async function fetchEvaluationsFromSheet(
   );
 
   if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('SESION_EXPIRADA: Tu sesión de Google ha expirado.');
+    }
     console.error('Failed to fetch rows from spreadsheet:', res.status);
     return [];
   }
@@ -297,8 +433,10 @@ export async function saveEvaluationToSheet(
   spreadsheetId: string,
   evalData: EvaluationResult | StoredEvaluation
 ): Promise<void> {
+  const { sheetTitle } = await ensureEvaluationsSheet(accessToken, spreadsheetId);
+
   // First verify if it already exists to avoid duplicate entries
-  const existingRecords = await fetchEvaluationsFromSheet(accessToken, spreadsheetId);
+  const existingRecords = await fetchEvaluationsFromSheet(accessToken, spreadsheetId).catch(() => []);
   const exists = existingRecords.some((r) => r.id === evalData.id);
   if (exists) {
     return; // Already saved
@@ -317,29 +455,32 @@ export async function saveEvaluationToSheet(
       evalData.date,
       evalData.userName || 'Participante',
       evalData.totalScore,
-      evalData.pillarScores.sleep,
-      evalData.pillarScores.nutrition,
-      evalData.pillarScores.mind,
-      evalData.pillarScores.exercise,
+      evalData.pillarScores.sleep ?? 0,
+      evalData.pillarScores.nutrition ?? 0,
+      evalData.pillarScores.mind ?? 0,
+      evalData.pillarScores.exercise ?? 0,
       archetypeTitle,
       JSON.stringify(evalData.answers || {}),
     ],
   ];
 
-  const range = `${encodeURIComponent(SHEET_NAME)}!A:J:append?valueInputOption=USER_ENTERED`;
-  const appendRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ values: rowValues }),
-    }
-  );
+  const escapedTitle = `'${sheetTitle.replace(/'/g, "''")}'`;
+  const appendRange = encodeURIComponent(`${escapedTitle}!A:J`);
+  const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${appendRange}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+
+  const appendRes = await fetch(appendUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ values: rowValues }),
+  });
 
   if (!appendRes.ok) {
+    if (appendRes.status === 401) {
+      throw new Error('SESION_EXPIRADA: Tu sesión de Google ha expirado. Vuelve a iniciar sesión para guardar.');
+    }
     const err = await appendRes.json().catch(() => ({}));
     throw new Error(err?.error?.message || `Error al guardar registro en Google Sheets (${appendRes.status})`);
   }
@@ -354,8 +495,11 @@ export async function removeEvaluationFromSheet(
   spreadsheetId: string,
   evalId: string
 ): Promise<boolean> {
+  const { sheetTitle, sheetNumericId } = await ensureEvaluationsSheet(accessToken, spreadsheetId);
+
   // 1. Fetch current rows to find exact row index
-  const range = `${encodeURIComponent(SHEET_NAME)}!A1:A500`;
+  const escapedTitle = `'${sheetTitle.replace(/'/g, "''")}'`;
+  const range = encodeURIComponent(`${escapedTitle}!A1:A`);
   const res = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
     {
@@ -364,6 +508,9 @@ export async function removeEvaluationFromSheet(
   );
 
   if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('SESION_EXPIRADA: Tu sesión de Google ha expirado.');
+    }
     throw new Error('No se pudo verificar el registro en la hoja de cálculo');
   }
 
@@ -380,10 +527,7 @@ export async function removeEvaluationFromSheet(
     return false;
   }
 
-  // 2. Fetch sheet numeric ID
-  const sheetNumericId = await getNumericSheetId(accessToken, spreadsheetId);
-
-  // 3. Delete row dimension
+  // 2. Delete row dimension
   const deleteRes = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`,
     {
@@ -425,7 +569,9 @@ export async function clearAllEvaluationsFromSheet(
   accessToken: string,
   spreadsheetId: string
 ): Promise<void> {
-  const range = `${encodeURIComponent(SHEET_NAME)}!A2:J500`;
+  const { sheetTitle } = await ensureEvaluationsSheet(accessToken, spreadsheetId);
+  const escapedTitle = `'${sheetTitle.replace(/'/g, "''")}'`;
+  const range = encodeURIComponent(`${escapedTitle}!A2:J`);
   const res = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:clear`,
     {
@@ -710,13 +856,30 @@ function doGet(e) {
  * Test Webhook connection with the owner's Apps Script Web App
  */
 export async function testWebhookConnection(webhookUrl: string): Promise<{ success: boolean; message: string }> {
-  if (!webhookUrl || !webhookUrl.startsWith('http')) {
-    return { success: false, message: 'La URL del Webhook debe comenzar con https://script.google.com/...' };
+  if (!webhookUrl || !webhookUrl.trim()) {
+    return { success: false, message: 'La URL del Webhook no puede estar vacía.' };
+  }
+
+  const trimmed = webhookUrl.trim();
+
+  if (trimmed.includes('docs.google.com/spreadsheets')) {
+    return {
+      success: false,
+      message:
+        'Has ingresado el enlace de Google Sheets en el campo de Webhook. El Webhook se genera en Extensiones > Apps Script > Implementar > Nueva implementación > Aplicación web (debe comenzar con https://script.google.com/macros/s/...).',
+    };
+  }
+
+  if (!trimmed.startsWith('https://script.google.com/')) {
+    return {
+      success: false,
+      message: 'La URL del Webhook debe comenzar con https://script.google.com/macros/s/...',
+    };
   }
 
   try {
     // Test using POST ping
-    const res = await fetch(webhookUrl, {
+    const res = await fetch(trimmed, {
       method: 'POST',
       headers: {
         'Content-Type': 'text/plain;charset=utf-8',
@@ -732,14 +895,14 @@ export async function testWebhookConnection(webhookUrl: string): Promise<{ succe
           message: data.message || '¡Conexión verificada exitosamente con tu Google Sheet!',
         };
       }
-      return { success: true, message: 'Conexión recibida exitosamente por el Webhook.' };
+      return { success: true, message: 'Conexión recibida exitosamente por el Webhook de Google Sheets.' };
     }
-    return { success: false, message: `El servidor respondió con código ${res.status}. Verifica los permisos de acceso de la Web App.` };
+    return { success: false, message: `El servidor respondió con código ${res.status}. Verifica que en Apps Script la opción "Quién tiene acceso" esté configurada en "Cualquier usuario" (Anyone).` };
   } catch (err: any) {
     console.warn('Direct fetch failed, testing with no-cors fallback:', err);
     // Attempt no-cors fetch to verify network reachability
     try {
-      await fetch(webhookUrl, {
+      await fetch(trimmed, {
         method: 'POST',
         mode: 'no-cors',
         headers: {
@@ -767,8 +930,16 @@ export async function saveEvaluationViaWebhook(
   webhookUrl: string,
   evalData: EvaluationResult | StoredEvaluation
 ): Promise<{ success: boolean; message?: string }> {
-  if (!webhookUrl) {
+  if (!webhookUrl || !webhookUrl.trim()) {
     throw new Error('URL de Webhook no configurada');
+  }
+
+  const trimmed = webhookUrl.trim();
+
+  if (trimmed.includes('docs.google.com/spreadsheets')) {
+    throw new Error(
+      'Has ingresado un enlace de Google Sheets en el campo de Webhook. El Webhook se genera en Apps Script (comienza con https://script.google.com/macros/s/...).'
+    );
   }
 
   const archetypeTitle =

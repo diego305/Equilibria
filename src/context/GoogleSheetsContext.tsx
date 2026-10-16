@@ -81,6 +81,8 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   });
 
+  const [pendingRecord, setPendingRecord] = useState<EvaluationResult | StoredEvaluation | null>(null);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -131,11 +133,28 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
   }, []);
 
-  // Update Owner Config
+  // Update Owner Config & auto-save pending record if webhook is now ready
   const updateOwnerConfig = useCallback((newConfig: Partial<OwnerSheetConfig>) => {
     const updated = saveStoredOwnerConfig(newConfig);
     setOwnerConfig(updated);
-  }, []);
+
+    if (updated.webhookUrl && updated.enabled && pendingRecord) {
+      saveEvaluationViaWebhook(updated.webhookUrl, pendingRecord)
+        .then((res) => {
+          if (res.success) {
+            addLocallySavedId(pendingRecord.id);
+            setPendingRecord(null);
+            setStatusMessage({
+              type: 'success',
+              text: '¡Configuración guardada y evaluación registrada exitosamente en Google Sheets!',
+            });
+          }
+        })
+        .catch((err) => {
+          console.warn('Could not auto-save pending record via webhook:', err);
+        });
+    }
+  }, [pendingRecord, addLocallySavedId]);
 
   // Test Webhook
   const testWebhook = useCallback(async (): Promise<{ success: boolean; message: string }> => {
@@ -216,6 +235,26 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setUser(result.user);
         setAccessToken(result.accessToken);
         await loadSpreadsheetData(result.accessToken);
+
+        // Auto-save pending evaluation if one was queued
+        if (pendingRecord) {
+          try {
+            const targetSheet = await getOrCreateSpreadsheet(result.accessToken, ownerConfig.spreadsheetId);
+            await saveEvaluationToSheet(result.accessToken, targetSheet.id, pendingRecord);
+            addLocallySavedId(pendingRecord.id);
+            const fresh = await fetchEvaluationsFromSheet(result.accessToken, targetSheet.id);
+            setSheetRecords(fresh);
+            setPendingRecord(null);
+            setStatusMessage({
+              type: 'success',
+              text: '¡Conexión establecida y evaluación guardada exitosamente en Google Sheets!',
+            });
+            return true;
+          } catch (pErr) {
+            console.warn('Could not auto-save pending record upon login:', pErr);
+          }
+        }
+
         setStatusMessage({
           type: 'success',
           text: 'Conectado exitosamente con tu cuenta de Google.',
@@ -282,9 +321,12 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
     } catch (err: any) {
       console.error('Error refreshing records:', err);
+      const isExpired = err?.message?.includes('SESION_EXPIRADA') || err?.message?.includes('401');
       setStatusMessage({
         type: 'error',
-        text: 'No se pudieron actualizar los registros de Google Sheets.',
+        text: isExpired
+          ? 'Tu sesión de Google ha expirado. Haz clic en "Conectar con Google" para renovarla.'
+          : 'No se pudieron actualizar los registros de Google Sheets.',
       });
     } finally {
       setIsLoading(false);
@@ -308,6 +350,7 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
         await saveEvaluationToSheet(token, targetSpreadsheet.id, evaluation);
         addLocallySavedId(evaluation.id);
+        setPendingRecord(null);
 
         // Re-fetch records
         const updatedRecords = await fetchEvaluationsFromSheet(token, targetSpreadsheet.id);
@@ -320,7 +363,23 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setIsSaving(false);
         return true;
       } catch (err: any) {
-        console.warn('OAuth save error, attempting webhook if available:', err);
+        console.warn('OAuth save error, checking webhook fallback:', err);
+        const isExpired =
+          err?.message?.includes('SESION_EXPIRADA') ||
+          err?.message?.includes('401') ||
+          err?.message?.includes('invalid_grant');
+
+        // If webhook is NOT configured, report exact error!
+        if (!isThirdPartyReady || !ownerConfig.webhookUrl) {
+          setIsSaving(false);
+          setStatusMessage({
+            type: 'error',
+            text: isExpired
+              ? 'Tu sesión de Google ha expirado. Haz clic en "Conectar con Google" para renovar el acceso y guardar.'
+              : `Error al guardar en Google Sheets: ${err?.message || 'Error desconocido'}`,
+          });
+          return false;
+        }
       }
     }
 
@@ -329,6 +388,7 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       try {
         const result = await saveEvaluationViaWebhook(ownerConfig.webhookUrl, evaluation);
         addLocallySavedId(evaluation.id);
+        setPendingRecord(null);
         
         // Optimistically add to sheetRecords or refresh
         setSheetRecords((prev) => {
@@ -359,21 +419,22 @@ export const GoogleSheetsProvider: React.FC<{ children: React.ReactNode }> = ({ 
         return true;
       } catch (webhookErr: any) {
         console.error('Webhook save error:', webhookErr);
+        setIsSaving(false);
         setStatusMessage({
           type: 'error',
           text: `Error al guardar en la hoja del evaluador: ${webhookErr?.message || 'Error de conexión'}`,
         });
-        setIsSaving(false);
         return false;
       }
     }
 
-    // Option C: Neither is configured yet -> open prompt/modal
+    // Option C: Neither is configured yet -> queue pending record and open config modal
+    setPendingRecord(evaluation);
     setIsSaving(false);
     setIsConfigModalOpen(true);
     setStatusMessage({
       type: 'info',
-      text: 'Conecta con Google o configura el enlace de la hoja del evaluador para guardar registros.',
+      text: 'Conecta con Google o configura el enlace de la hoja del evaluador para guardar registros automáticamente.',
     });
     return false;
   };
